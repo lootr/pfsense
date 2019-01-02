@@ -5120,6 +5120,12 @@ EOD;
 }
 
 function DHCP_Config_File_Advanced($interface, $ifcfg, $realif) {
+	global $vlanprio_values;
+
+	$dhclientconf_vlantag = "";
+	if (isset($ifcfg['dhcpvlanenable']) && isset($ifcfg['dhcpcvpt'])) {
+		$dhclientconf_vlantag = "vlan-pcp {$vlanprio_values[$ifcfg['dhcpcvpt']]};\n";
+	}
 
 	$hostname = "";
 	if ($ifcfg['dhcphostname'] != '') {
@@ -5172,6 +5178,7 @@ function DHCP_Config_File_Advanced($interface, $ifcfg, $realif) {
 	$dhclientconf .= "{$adv_dhcp_pt_reboot}";
 	$dhclientconf .= "{$adv_dhcp_pt_backoff_cutoff}";
 	$dhclientconf .= "{$adv_dhcp_pt_initial_interval}";
+	$dhclientconf .= "{$dhclientconf_vlantag}";
 	$dhclientconf .= "\n";
 	$dhclientconf .= "# DHCP Protocol Options\n";
 	$dhclientconf .= "{$hostname}";
